@@ -1,10 +1,10 @@
-﻿# -*- coding: UTF-8 -*-
+# -*- coding: UTF-8 -*-
 
 import client
 import datetime
 import re
 
-token="YOURTOCKEN"
+from feedly_config import token
 
 #ключевые слова для неинтересных новостей
 bad_re  = re.compile(u'Deluge|redis|DotNext|haskell|Ruby|smarttv|Fedora|PHP|Oracle|SOAP|node.js|yii|web-разработк|веб-разработк', re.IGNORECASE)
