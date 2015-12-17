@@ -1,11 +1,21 @@
-cd "$(dirname "$0")"
+
+Projpath=$1
+REPO=$2
 
 if [ -z "$1" ]; then
-	echo "[EE] Needed repository name"
-	exit 1
+    echo "[EE] Needed repository path"
+    exit 1
 fi
 
-REPO="$1"
+if [ -z "$2" ]; then
+    echo "[EE] Needed repository name"
+    exit 1
+fi
+
+cd $Projpath
+if (($? > 0)); then
+    exit 1;
+fi
 
 read -p "clone? (Y/y/Д/д/+) " -n 1 -r
 echo ""   # (optional) move to a new line
@@ -13,7 +23,15 @@ if [[ $REPLY =~ ^[YyДд+]$ ]]; then
     echo "#####################################"
     echo "#               CLONE               #"
     echo "#####################################"
-    git clone --recursive git@git.yourrepository.com:"$REPO"
+
+    # Загрузка конфига
+    source ./config.cfg
+    if (($? > 0)); then
+        echo "Error 1"
+        exit 1
+    fi
+    # $PEPOPATH is readed from config 
+    git clone --recursive "${PEPOPATH}:"${REPO}"
 fi
 
 cd "$REPO"

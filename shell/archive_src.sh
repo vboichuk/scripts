@@ -1,14 +1,23 @@
-cd "$(dirname "$0")"
+Projpath=$1
+REPO=$2
 
 if [ -z "$1" ]; then
-	echo "[EE] Needed repository name"
-	exit 1
+    echo "[EE] Needed repository path"
+    exit 1
 fi
 
-REPO="$1"
+if [ -z "$2" ]; then
+    echo "[EE] Needed repository name"
+    exit 1
+fi
+
+cd $Projpath/$REPO
+if (($? > 0)); then
+    exit 1;
+fi
+
 
 # --- получение номера текущей ревизии ------
-cd $REPO
 MESSAGE=$(git log -1 --pretty=%B)
 #echo "${MESSAGE}"
 REVISION=$(grep -o "^[0-9]*" <<< $MESSAGE)
