@@ -7,7 +7,7 @@ import re
 from feedly_config import token
 
 #ключевые слова для неинтересных новостей
-bad_re  = re.compile(u'Deluge|redis|DotNext|haskell|Ruby|smarttv|Fedora|PHP|Oracle|SOAP|node.js|yii|web-разработк|веб-разработк', re.IGNORECASE)
+bad_re  = re.compile(u'Deluge|redis|DotNext|haskell|Ruby|smarttv|Fedora|PHP|Oracle|SOAP|node.js|yii|web-разработк|веб-разработк|Квартиросъемка', re.IGNORECASE)
 
 #ключевые слова для "хороших" новостей
 good_re = re.compile(u'iOS|Android|Blender|GameDev|xcode|objective|appcode|cocos2d-x', re.IGNORECASE)
@@ -15,14 +15,15 @@ good_re = re.compile(u'iOS|Android|Blender|GameDev|xcode|objective|appcode|cocos
 # создание объекта
 feedly = client.FeedlyClient(token=token, sandbox=False)
 
-"""
+'''
 # получение списка каналов
 user_subscriptions = feedly.get_user_subscriptions(token)
 # проверка на успех
 if (type(user_subscriptions) is dict) and (user_subscriptions.get('errorMessage') != None):
 	print (user_subscriptions.get('errorMessage'))
 	exit(1)
-"""
+print (user_subscriptions)
+'''
 
 dt = datetime.date(2014,1,1)
 unixtime = (dt - datetime.date(1970,1,1)).total_seconds()
@@ -32,8 +33,8 @@ uninteresting_ids = []
 
 # <tmp>
 # список каналов для проверки
-elem = {'id': "feed/http://habrahabr.ru/rss/best/" }
-user_subscriptions = [elem]
+# elem = {'id': "feed/http://habrahabr.ru/rss/best/" }
+user_subscriptions = [{'id': "feed/http://habrahabr.ru/rss/best/" }, {'id': "feed/http://citydog.by/rss/" }]
 # </tmp>
 
 # цикл по каналам
