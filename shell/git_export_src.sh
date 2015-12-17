@@ -1,6 +1,7 @@
 
 Projpath=$1
 REPO=$2
+mydir=$(dirname "$0")
 
 if [ -z "$1" ]; then
     echo "[EE] Needed repository path"
@@ -25,13 +26,13 @@ if [[ $REPLY =~ ^[YyДд+]$ ]]; then
     echo "#####################################"
 
     # Загрузка конфига
-    source ./config.cfg
+    source $mydir/config.cfg
     if (($? > 0)); then
         echo "Error 1"
         exit 1
     fi
     # $PEPOPATH is readed from config 
-    git clone --recursive "${PEPOPATH}:"${REPO}"
+    git clone --recursive "${PEPOPATH}:${REPO}"
 fi
 
 cd "$REPO"
