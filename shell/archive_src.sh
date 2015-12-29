@@ -39,7 +39,9 @@ zip -0 -X -r $ARCHIVE_NAME "${REPO}" \
     --exclude "*.DS_Store" \
     --exclude *.git*  \
     --exclude "${REPO}/tools/*" \
-    --exclude "${REPO}/localization/*" \
+    --exclude "${REPO}/localization/*"
+    
+# --exclude "${REPO}/proj.win8.1-universal/*"    
 
 exit 0
 
