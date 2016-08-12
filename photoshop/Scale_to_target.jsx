@@ -59,7 +59,7 @@ while (app.documents.length > 0) {
 			doc.resizeImage(UnitValue(fWidth,"px"), null, null, ResampleMethod.BICUBICSHARPER);
 	}
 
-	var directory = Folder(doc.path + "/small");
+	var directory = Folder(doc.path + "/small (" + fWidth + "x" + fHeight + ")");
 	if (!directory.exists)
 		directory.create();
 
