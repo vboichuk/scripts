@@ -7,7 +7,7 @@ import re
 from feedly_config import token
 
 #ключевые слова для неинтересных новостей
-bad_re  = re.compile(u'Deluge|redis|DotNext|haskell|Ruby|smarttv|Fedora|PHP|Oracle|SOAP|node.js|yii|web-разработк|веб-разработк|Квартиросъемка', re.IGNORECASE)
+bad_re  = re.compile(u'Deluge|redis|DotNext|haskell|Ruby|smarttv|Fedora|PHP|Oracle|SOAP|Go|node.js|yii|web-разработк|веб-разработк|веб-технол|Azure|css|поблагодарил|прокомментировал', re.IGNORECASE)
 
 #ключевые слова для "хороших" новостей
 good_re = re.compile(u'iOS|Android|Blender|GameDev|xcode|objective|appcode|cocos2d-x', re.IGNORECASE)
@@ -34,7 +34,11 @@ uninteresting_ids = []
 # <tmp>
 # список каналов для проверки
 # elem = {'id': "feed/http://habrahabr.ru/rss/best/" }
-user_subscriptions = [{'id': "feed/http://habrahabr.ru/rss/best/" }, {'id': "feed/http://citydog.by/rss/" }]
+user_subscriptions = [
+	{'id': "feed/http://habrahabr.ru/rss/best/" },
+	{'id': "feed/http://lenta.ru/rss/news/russia/" }
+	
+]
 # </tmp>
 
 # цикл по каналам

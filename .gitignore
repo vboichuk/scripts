@@ -1,5 +1,4 @@
 .DS_Store
 config.cfg
 python/feedly_config.py*
-_build_android.sh
-_scale.sh
+*.pyc

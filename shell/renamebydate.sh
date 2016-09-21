@@ -1,13 +1,13 @@
 #!/bin/bash
 
 for file in $(find *.JPG -type f); do
-#echo "[${file}]..."
+    #echo "[${file}]..."
 	filename=$(basename "$file")
-#echo "[${file}] = [${filename}]..."	
+    #echo "[${file}] = [${filename}]..."
 	filename="${filename%.*}"
 	extention=${file##*.}
 
-#echo "[${file}] = [${filename}].[${extention}]..."
+    #echo "[${file}] = [${filename}].[${extention}]..."
 	
 	# targetname=$(date -d @$(stat -f="%Y" "${file}") + "%Y.%m.%d_(%H-%M-%S)")
 	targetname=$(stat -f "%Sm" -t "%Y.%m.%d_(%H-%M-%S)" "${file}")

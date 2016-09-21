@@ -31,8 +31,8 @@ if [[ $REPLY =~ ^[YyДд+]$ ]]; then
         echo "Error 1"
         exit 1
     fi
-    # $PEPOPATH is readed from config 
-    git clone --recursive "${PEPOPATH}:${REPO}"
+    # $REPOPATH is readed from config 
+    git clone --recursive "${REPOPATH}:${REPO}"
 fi
 
 cd "$REPO"
