@@ -15,10 +15,36 @@ for file in $(find . -type f -iname '*.jpg' -maxdepth 1); do
 	# echo "${extention} => ${EXTENTION}"
 
 	# try to find datetime in old file name
-	match=$(echo "${filename}" | grep -oE "[1-2][0-9][0-9][0-9][._-]?[0-1][0-9][._-]*[0-3][0-9]" | sed 's/[^0-9]//g' )
+
+    REVERSE=0
+    #YYYY/MM/DD
+    match=$(echo "${filename}" | grep -oE "(20|19)[0-9]{2}[\/._-](0[1-9]|1[0-2])[\/._-](0[1-9]|[1-2][0-9]|3[0-1])" | sed 's/[^0-9]//g' )
+
+    if [[ $match == '' ]]; then
+        #YYYYMMDD
+        match=$(echo "${filename}" | grep -oE "(20|19)[0-9]{2}(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])" | sed 's/[^0-9]//g' )
+        REVERSE=0
+    fi
+
+    if [[ $match == '' ]]; then
+        #DD/MM/YYYY
+        match=$(echo "${filename}" | grep -oE "(0[1-9]|[1-2][0-9]|3[0-1])[\/._-](0[1-9]|1[0-2])[\/._-](20|19)[0-9]{2}" | sed 's/[^0-9]//g' )
+        REVERSE=1
+    fi
+
+    if [[ $match == '' ]]; then
+        #DDMMYYYY
+        match=$(echo "${filename}" | grep -oE "(0[1-9]|[1-2][0-9]|3[0-1])(0[1-9]|1[0-2])(20|19)[0-9]{2}" | sed 's/[^0-9]//g' )
+        REVERSE=1
+    fi
+
 	if [[ $match != '' ]]; then
 		# echo ">>> ${match}"
-		match=${match:0:4}.${match:4:2}.${match:6:2}
+        if [[ $REVERSE == 0 ]]; then
+            match=${match:0:4}.${match:4:2}.${match:6:2}
+        else
+            match=${match:4:4}.${match:2:2}.${match:0:2}
+        fi
 		# echo ">>> ${match}"
 		targetname=$(stat -f "%Sm" -t "(%H-%M)" "${file}")
 		targetname="${match}_${targetname}"
@@ -26,9 +52,6 @@ for file in $(find . -type f -iname '*.jpg' -maxdepth 1); do
 		# targetname=$(date -d @$(stat -f="%Y" "${file}") + "%Y.%m.%d_(%H-%M-%S)")
 		targetname=$(stat -f "%Sm" -t "%Y.%m.%d_(%H-%M)" "${file}")
 	fi
-
-    #echo "[${file}] = [${filename}].[${extention}]..."
-	#echo "${filename}"
 
 	# Adding short hach to filename
 	hach=$(md5 "${file}" | grep -oE "[0-9a-f]{32}")
@@ -44,14 +67,22 @@ for file in $(find . -type f -iname '*.jpg' -maxdepth 1); do
 	
    	newname=$targetname
 
-	i=0
-	while [ -f "$newname.$EXTENTION" ]
-	do	
-		i=$(( $i+1 ))
-		newname="$targetname-($i)"
-	done
+### deprecated
+#i=0
+#while [ -f "$newname.$EXTENTION" ]
+#	do
+#		i=$(( $i+1 ))
+#		newname="$targetname-($i)"
+#	done
 
-	echo "${file} -> ${newname}.${EXTENTION}"
+    if [[ $match != '' ]]; then
+        COMMENT="<from name>"
+    else
+        COMMENT="<from extra data>"
+    fi
+
+    echo "${file} -> ${newname}.${EXTENTION} ${COMMENT}"
+
 	command="mv $file $newname.$EXTENTION"
 	$command
 done
