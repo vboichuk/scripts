@@ -1,8 +1,11 @@
 #!/bin/bash
 
-for file in $(find . -type f -iname '*.jpg' -maxdepth 1); do
+SAVEIFS=$IFS
+IFS=$(echo -en "\n\b")
+
+for file in $(ls | grep -iE ".JPG|.MP4|.PNG"); do
 	if [ ! -f "${file}" ]; then
-		echo "erorr '${file}'"
+		echo "error '${file}'"
 		continue
 	fi
     #echo "${file}"
@@ -12,7 +15,6 @@ for file in $(find . -type f -iname '*.jpg' -maxdepth 1); do
 
 	extention=${file##*.}
 	EXTENTION=$(echo $extention | tr '[:lower:]' '[:upper:]' )
-	# echo "${extention} => ${EXTENTION}"
 
 	# try to find datetime in old file name
 
@@ -67,13 +69,6 @@ for file in $(find . -type f -iname '*.jpg' -maxdepth 1); do
 	
    	newname=$targetname
 
-### deprecated
-#i=0
-#while [ -f "$newname.$EXTENTION" ]
-#	do
-#		i=$(( $i+1 ))
-#		newname="$targetname-($i)"
-#	done
 
     if [[ $match != '' ]]; then
         COMMENT="<from name>"
@@ -83,6 +78,7 @@ for file in $(find . -type f -iname '*.jpg' -maxdepth 1); do
 
     echo "${file} -> ${newname}.${EXTENTION} ${COMMENT}"
 
-	command="mv $file $newname.$EXTENTION"
-	$command
+    mv "${file}" $newname.$EXTENTION
 done
+
+IFS=$SAVEIFS
