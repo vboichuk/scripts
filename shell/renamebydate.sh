@@ -3,7 +3,7 @@
 SAVEIFS=$IFS
 IFS=$(echo -en "\n\b")
 
-for file in $(ls | grep -iE ".JPG|.MP4|.PNG"); do
+for file in $(ls | grep -iE ".JPG|.PNG|.MP4|.MOV"); do
 	if [ ! -f "${file}" ]; then
 		echo "error '${file}'"
 		continue
@@ -40,6 +40,8 @@ for file in $(ls | grep -iE ".JPG|.MP4|.PNG"); do
         REVERSE=1
     fi
 
+    FOLDERNAME="UNDEFINED"
+
 	if [[ $match != '' ]]; then
 		# echo ">>> ${match}"
         if [[ $REVERSE == 0 ]]; then
@@ -60,25 +62,26 @@ for file in $(ls | grep -iE ".JPG|.MP4|.PNG"); do
     hach=${hach:0:6}
 	targetname="$targetname-$hach"
 	
-	# echo $targetname
-
-    if [ "$filename" = "$targetname" ]
-	then
-		continue
-	fi
-	
-   	newname=$targetname
-
-
     if [[ $match != '' ]]; then
         COMMENT="<from name>"
     else
         COMMENT="<from extra data>"
     fi
 
-    echo "${file} -> ${newname}.${EXTENTION} ${COMMENT}"
+    if [ "$filename" != "$targetname" ]
+    then
+        echo "${file} -> ${targetname}.${EXTENTION} ${COMMENT}"
+        mv "${file}" $targetname.$EXTENTION
+    fi
 
-    mv "${file}" $newname.$EXTENTION
+    FOLDERNAME=${targetname:0:10}    
+
+    if [ ! -d $FOLDERNAME ]; then
+        echo "create [${FOLDERNAME}]"
+        mkdir $FOLDERNAME
+    fi
+
+    mv $targetname.$EXTENTION $FOLDERNAME
 done
 
 IFS=$SAVEIFS
