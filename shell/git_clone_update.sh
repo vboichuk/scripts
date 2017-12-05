@@ -1,6 +1,6 @@
 
 Projpath=$1
-REPO=$2
+REPOPATH=$2
 mydir=$(dirname "$0")
 
 if [ -z "$1" ]; then
@@ -25,27 +25,24 @@ if [[ $REPLY =~ ^[YyДд+]$ ]]; then
     echo "#               CLONE               #"
     echo "#####################################"
 
-    # Загрузка конфига
-    source $mydir/config.cfg
-    if (($? > 0)); then
-        echo "Error 1"
-        exit 1
-    fi
     # $REPOPATH is readed from config 
-    git clone --recursive "${REPOPATH}:${REPO}"
+    git clone --recursive "${REPOPATH}"
 fi
 
-cd "$REPO"
+cd "$REPOPATH"
 
-git checkout master
-git pull origin master
+git reset --hard HEAD &&  git clean -df
 
-for ITEM in `git submodule`
-do
-    if [ -d "$ITEM" ]; then
-        cd "$ITEM"
-        git checkout master
-        git pull origin master
-        cd ..
-    fi
-done
+# git checkout master
+git pull
+# git pull origin master
+
+# for ITEM in `git submodule`
+# do
+#     if [ -d "$ITEM" ]; then
+#         cd "$ITEM"
+#         git checkout master
+#         git pull origin master
+#         cd ..
+#     fi
+# done

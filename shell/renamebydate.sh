@@ -3,7 +3,7 @@
 SAVEIFS=$IFS
 IFS=$(echo -en "\n\b")
 
-for file in $(ls | grep -iE ".JPG|.PNG|.MP4|.MOV"); do
+for file in $(ls | grep -iE ".JPG|.PNG|.MP4|.MOV|.CR2|.M4V"); do
 	if [ ! -f "${file}" ]; then
 		echo "error '${file}'"
 		continue
@@ -40,16 +40,12 @@ for file in $(ls | grep -iE ".JPG|.PNG|.MP4|.MOV"); do
         REVERSE=1
     fi
 
-    FOLDERNAME="UNDEFINED"
-
 	if [[ $match != '' ]]; then
-		# echo ">>> ${match}"
         if [[ $REVERSE == 0 ]]; then
             match=${match:0:4}.${match:4:2}.${match:6:2}
         else
             match=${match:4:4}.${match:2:2}.${match:0:2}
         fi
-		# echo ">>> ${match}"
 		targetname=$(stat -f "%Sm" -t "(%H-%M)" "${file}")
 		targetname="${match}_${targetname}"
 	else
@@ -74,14 +70,14 @@ for file in $(ls | grep -iE ".JPG|.PNG|.MP4|.MOV"); do
         mv "${file}" $targetname.$EXTENTION
     fi
 
-    FOLDERNAME=${targetname:0:10}    
-
-    if [ ! -d $FOLDERNAME ]; then
-        echo "create [${FOLDERNAME}]"
-        mkdir $FOLDERNAME
-    fi
-
-    mv $targetname.$EXTENTION $FOLDERNAME
+    # FOLDERNAME=${targetname:0:10}    
+    # 
+    # if [ ! -d $FOLDERNAME ]; then
+    #     echo "create [${FOLDERNAME}]"
+    #     mkdir $FOLDERNAME
+    # fi
+    # 
+    # mv $targetname.$EXTENTION $FOLDERNAME
 done
 
 IFS=$SAVEIFS

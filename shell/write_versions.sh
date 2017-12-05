@@ -18,14 +18,15 @@ if (($? > 0)); then
 fi
 
 echo "Core:" > "version.txt"
-git log -1 --pretty=%B >> "version.txt"
+
+git log -1 --pretty=format:'[%h] - %s (%cd) [%an]' --date=format:'%d.%m.%Y %H:%M' >> "version.txt"
 
 for ITEM in `git submodule`
 do
     if [ -d "$ITEM" ]; then
         cd "$ITEM"
-        echo "${ITEM}:" >> "../version.txt"
-        git log -1 --pretty=%B  >> "../version.txt"
+        echo "\n${ITEM}:" >> "../version.txt"
+        echo $(git log -1 --pretty=format:'[%h] - %s (%cd) [%an]' --date=format:'%d.%m.%Y %H:%M')  >> "../version.txt"
         cd ..
     fi
 done
