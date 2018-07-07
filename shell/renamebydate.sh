@@ -3,7 +3,7 @@
 SAVEIFS=$IFS
 IFS=$(echo -en "\n\b")
 
-for file in $(ls | grep -iE ".JPG|.PNG|.MP4|.MOV|.CR2|.M4V"); do
+for file in $(ls | grep -iE ".JPG|.JPEG|.PNG|.PSD|.MP4|.MOV|.CR2|.M4V"); do
 	if [ ! -f "${file}" ]; then
 		echo "error '${file}'"
 		continue
@@ -18,36 +18,45 @@ for file in $(ls | grep -iE ".JPG|.PNG|.MP4|.MOV|.CR2|.M4V"); do
 
 	# try to find datetime in old file name
 
-    REVERSE=0
-    #YYYY/MM/DD
-    match=$(echo "${filename}" | grep -oE "(20|19)[0-9]{2}[\/._-](0[1-9]|1[0-2])[\/._-](0[1-9]|[1-2][0-9]|3[0-1])" | sed 's/[^0-9]//g' )
 
-    if [[ $match == '' ]]; then
+    REVERSE=0
+    #YYYY/MM/DD (с разделителем)
+    matchDate=$(echo "${filename}" | grep -oE "(20|19)[0-9]{2}[\/._-](0[1-9]|1[0-2])[\/._-](0[1-9]|[1-2][0-9]|3[0-1])" | sed 's/[^0-9]//g' )
+	matchTime=$(echo "${filename}" | grep -oE "([0-1][0-9]|2[0-3])[\/._-][0-5][0-9]" | tail -n 1 | sed 's/[^0-9]//g' )
+
+    if [[ $matchDate == '' ]]; then
         #YYYYMMDD
-        match=$(echo "${filename}" | grep -oE "(20|19)[0-9]{2}(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])" | sed 's/[^0-9]//g' )
+        matchDate=$(echo "${filename}" | grep -oE "(20|19)[0-9]{2}(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])" | sed 's/[^0-9]//g' )
+        matchTime=$(echo "${filename}" | grep -oE "([0-1][0-9]|2[0-3])[0-5][0-9][0-5][0-9]" | tail -n 1 | sed 's/[^0-9]//g' )
         REVERSE=0
     fi
 
-    if [[ $match == '' ]]; then
+    if [[ $matchDate == '' ]]; then
         #DD/MM/YYYY
-        match=$(echo "${filename}" | grep -oE "(0[1-9]|[1-2][0-9]|3[0-1])[\/._-](0[1-9]|1[0-2])[\/._-](20|19)[0-9]{2}" | sed 's/[^0-9]//g' )
+        matchDate=$(echo "${filename}" | grep -oE "(0[1-9]|[1-2][0-9]|3[0-1])[\/._-](0[1-9]|1[0-2])[\/._-](20|19)[0-9]{2}" | sed 's/[^0-9]//g' )
         REVERSE=1
     fi
 
-    if [[ $match == '' ]]; then
+    if [[ $matchDate == '' ]]; then
         #DDMMYYYY
-        match=$(echo "${filename}" | grep -oE "(0[1-9]|[1-2][0-9]|3[0-1])(0[1-9]|1[0-2])(20|19)[0-9]{2}" | sed 's/[^0-9]//g' )
+        matchDate=$(echo "${filename}" | grep -oE "(0[1-9]|[1-2][0-9]|3[0-1])(0[1-9]|1[0-2])(20|19)[0-9]{2}" | sed 's/[^0-9]//g' )
         REVERSE=1
     fi
 
-	if [[ $match != '' ]]; then
+	# echo "matchTime=[${matchTime}]"
+
+	if [[ $matchDate != '' ]]; then
         if [[ $REVERSE == 0 ]]; then
-            match=${match:0:4}.${match:4:2}.${match:6:2}
+            matchDate=${matchDate:0:4}.${matchDate:4:2}.${matchDate:6:2}
+            if [[ $matchTime != '' ]]; then
+            	matchTime=${matchTime:0:2}-${matchTime:2:2}
+        	fi
+
         else
-            match=${match:4:4}.${match:2:2}.${match:0:2}
+            matchDate=${matchDate:4:4}.${matchDate:2:2}.${matchDate:0:2}
         fi
-		targetname=$(stat -f "%Sm" -t "(%H-%M)" "${file}")
-		targetname="${match}_${targetname}"
+		# targetname=$(stat -f "%Sm" -t "(%H-%M)" "${file}")
+		targetname="${matchDate}_(${matchTime})"
 	else
 		# targetname=$(date -d @$(stat -f="%Y" "${file}") + "%Y.%m.%d_(%H-%M-%S)")
 		targetname=$(stat -f "%Sm" -t "%Y.%m.%d_(%H-%M)" "${file}")
@@ -58,7 +67,7 @@ for file in $(ls | grep -iE ".JPG|.PNG|.MP4|.MOV|.CR2|.M4V"); do
     hach=${hach:0:6}
 	targetname="$targetname-$hach"
 	
-    if [[ $match != '' ]]; then
+    if [[ $matchDate != '' ]]; then
         COMMENT="<from name>"
     else
         COMMENT="<from extra data>"
@@ -68,6 +77,7 @@ for file in $(ls | grep -iE ".JPG|.PNG|.MP4|.MOV|.CR2|.M4V"); do
     then
         echo "${file} -> ${targetname}.${EXTENTION} ${COMMENT}"
         mv "${file}" $targetname.$EXTENTION
+        # exit 0
     fi
 
     # FOLDERNAME=${targetname:0:10}    
